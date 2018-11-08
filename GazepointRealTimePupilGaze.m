@@ -47,31 +47,27 @@ RPOGXDATA = 24;
 RPOGYDATA = 26;
 RPOGVDATA = 28;
 LPDDATA = 34;
+LPSDATA = 36;
+LPVDATA = 38;
 RPDDATA = 44;
+RPSDATA = 46;
+RPVDATA = 48;
 
 % clear any backlog of data, if not read fast enough the buffer queues old
 flushinput(client_socket)
 
-figure(1);
-clf
-hold on
-grid on
-axis ij; % shift origon, data reported in screen coordinates, (0,0) top left
-axis([0 1 0 1]) % multiple data by width/height in pixels for screen pixels
-axis([0 1920 0 1080]) % multiple data by width/height in pixels for screen pixels
-
 time = [];
 elapsed = [];
 lpd = [];
+lps = [];
 rpd = [];
+rps = [];
 fpogx = [];
 fpogy = [];
 rpogx = [];
 rpogy = [];
 lpogx = [];
 lpogy = [];
-
-datetime('now')
 
 clear last_fpog
 while (1)
@@ -84,12 +80,12 @@ TmpStore = strsplit(DataReceived,'"'); % split on "
 
 if (strfind (TmpStore{1}, '<REC') == 1) 
     % pull out data of interest
-    fpog = [str2num(TmpStore{FPOGXDATA}), str2num(TmpStore{FPOGYDATA})];
+    fpog = [str2double(TmpStore{FPOGXDATA}), str2double(TmpStore{FPOGYDATA})];
     fpogv = str2num(TmpStore{FPOGVDATA});
 
-    rpog = [str2num(TmpStore{RPOGXDATA}), str2num(TmpStore{RPOGYDATA})];
+    rpog = [str2double(TmpStore{RPOGXDATA}), str2double(TmpStore{RPOGYDATA})];
     rpogv = str2num(TmpStore{RPOGVDATA});
-    lpog = [str2num(TmpStore{LPOGXDATA}), str2num(TmpStore{LPOGYDATA})];
+    lpog = [str2double(TmpStore{LPOGXDATA}), str2double(TmpStore{LPOGYDATA})];
     lpogv = str2num(TmpStore{LPOGVDATA});
     
     if (rpogv == 1)
@@ -117,10 +113,26 @@ if (strfind (TmpStore{1}, '<REC') == 1)
     end
     
     time = [time; datestr(now,'dd-mm-yyyy HH:MM:SS.FFF')];
-    elapsed = [elapsed; str2num(TmpStore{TIMEDATA})];
+    elapsed = [elapsed; str2double(TmpStore{TIMEDATA})];
     
-    lpd = [lpd; str2num(TmpStore{LPDDATA})];
-    rpd = [rpd; str2num(TmpStore{RPDDATA})];
+    lpv = str2num(TmpStore{LPVDATA});
+    rpv = str2num(TmpStore{RPVDATA});
+    
+    if (lpv == 1)
+        lpd = [lpd; str2double(TmpStore{LPDDATA})];
+        lps = [lps; str2double(TmpStore{LPSDATA})];
+    else
+        lpd = [lpd; -1];
+        lps = [lps; -1];
+    end
+    
+    if (rpv == 1)
+        rpd = [rpd; str2double(TmpStore{RPDDATA})];
+        rps = [rps; str2double(TmpStore{RPSDATA})];
+    else
+        rpd = [rpd; -1];
+        rps = [rps; -1];
+    end
 end 
 % clear any backlog of data, if not read fast enough the buffer queues old
 flushinput(client_socket)
