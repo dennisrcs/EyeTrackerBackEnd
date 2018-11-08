@@ -1,0 +1,10 @@
+time = [];
+elapsed = [];
+lpd = [];
+rpd;
+fpogx;
+fpogy;
+rpogx;
+rpogy;
+lpogx;
+lpogy;
