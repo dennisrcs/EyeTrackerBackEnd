@@ -145,6 +145,6 @@ fclose(client_socket);
 delete(client_socket); 
 clear client_socket 
 
-participant = 'S004';
+participant = 'S006';
 path = ['data/', participant];
 save(path, 'time', 'elapsed', 'lpd', 'lps', 'rpd', 'rps', 'fpogx', 'fpogy', 'rpogx', 'rpogy', 'lpogx', 'lpogy');
